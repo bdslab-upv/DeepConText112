@@ -28,7 +28,7 @@ Furthermore, this code can serve as a template for numerous other applications t
 - **Main developer**: Pablo Ferri, Ph.D.
 - **Authors**: Pablo Ferri (UPV), Vincenzo Lomonaco (UNIPI), Lucia C.Passaro (UNIPI), Antonio Félix-De Castro (GVA), Purificación Sánchez-Cuesta (GVA), Carlos Sáez (UPV) and Juan M García-Gómez (UPV)
 
-Copyright: 2024 - Biomedical Data Science Lab, Universitat Politècnica de Valècia, Spain (UPV)
+Copyright: 2024 - Biomedical Data Science Lab, Universitat Politècnica de València, Spain (UPV)
 
 ## Acknowledgements
 This project was supported by the Ministry of Science, Innovation, and Universities of Spain through the FPU18/06441 program and partially funded by the PNRR-M4C2-Investment 1.3, Extended Partnership PE00000013-FAIR (Future Artificial Intelligence Research)-Spoke 1 Human-centered AI, financed by the European Commission under the NextGeneration EU program.
