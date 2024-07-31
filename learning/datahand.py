@@ -8,9 +8,9 @@ DATE: 01/07/22
 import datetime
 from os.path import join
 
-from avalanche.benchmarks.generators import dataset_benchmark
-from avalanche.benchmarks.scenarios.generic_cl_scenario import GenericCLScenario
-from avalanche.benchmarks.utils.avalanche_dataset import AvalancheTensorDataset
+from avalanche.benchmarks import dataset_benchmark
+from avalanche.benchmarks.scenarios import GenericCLScenario
+from avalanche.benchmarks.utils import AvalancheTensorDataset
 from pandas import DataFrame, ExcelWriter
 from torch import stack, from_numpy
 

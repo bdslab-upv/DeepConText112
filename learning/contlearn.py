@@ -8,10 +8,11 @@ DATE: 01/07/22
 import datetime
 from os.path import join
 
-from avalanche.benchmarks.scenarios.generic_cl_scenario import GenericCLScenario
+from avalanche.benchmarks.scenarios import GenericCLScenario
 from avalanche.evaluation.metrics import forgetting_metrics, accuracy_metrics, loss_metrics, confusion_matrix_metrics
 from avalanche.logging import InteractiveLogger, TensorboardLogger
-from avalanche.training import BaseStrategy, JointTraining, Cumulative, Naive, Replay, SynapticIntelligence
+from avalanche.training.templates import SupervisedTemplate
+from avalanche.training import JointTraining, Cumulative, Naive, Replay, SynapticIntelligence
 from avalanche.training.plugins import EvaluationPlugin
 from torch.cuda import is_available
 from torch.nn import Module
@@ -70,7 +71,7 @@ def define_evaluator(strategy_identifier: str):
 # STRATEGY DEFINITION
 # High-level strategy definition
 def define_strategy(strategy_identifier: str, *, model: Module, optimizer: Optimizer, loss_function: Module,
-                    evaluation_plugin: EvaluationPlugin, hyperparam_container: HyperparamContainer) -> BaseStrategy:
+                    evaluation_plugin: EvaluationPlugin, hyperparam_container: HyperparamContainer) -> SupervisedTemplate:
     # Strategy definition
     strategy = _define_strategy(strategy_identifier, model=model, optimizer=optimizer, loss_function=loss_function,
                                 batch_size_eval=BATCH_SIZE_EVAL, evaluation_step_epochs=EVAL_STEP_EPOCS,
@@ -83,7 +84,7 @@ def define_strategy(strategy_identifier: str, *, model: Module, optimizer: Optim
 # Low-level strategy definition
 def _define_strategy(strategy_identifier: str, *, model: Module, optimizer: Optimizer, loss_function: Module,
                      batch_size_eval: int, evaluation_step_epochs: int, evaluation_plugin: EvaluationPlugin,
-                     hyperparam_container: HyperparamContainer) -> BaseStrategy:
+                     hyperparam_container: HyperparamContainer) -> SupervisedTemplate:
     # Device definition
     device = 'cuda' if is_available() else 'cpu'
 
@@ -105,10 +106,9 @@ def _define_strategy(strategy_identifier: str, *, model: Module, optimizer: Opti
                               eval_every=evaluation_step_epochs, device=device)
     # single-experience
     elif strategy_identifier == 'SingleFineTuning':
-        strategy = BaseStrategy(model=model, optimizer=optimizer, criterion=loss_function, evaluator=evaluation_plugin,
-                                train_mb_size=batch_size_train, eval_mb_size=batch_size_eval,
-                                train_epochs=number_epochs,
-                                eval_every=evaluation_step_epochs, device=device)
+        strategy = SupervisedTemplate(model=model, optimizer=optimizer, criterion=loss_function, evaluator=evaluation_plugin,
+                                      train_mb_size=batch_size_train, eval_mb_size=batch_size_eval,
+                                      train_epochs=number_epochs, eval_every=evaluation_step_epochs, device=device)
     # naive
     elif strategy_identifier == 'ContinualFineTuning':
         strategy = Naive(model=model, optimizer=optimizer, criterion=loss_function, evaluator=evaluation_plugin,
@@ -142,7 +142,7 @@ def _define_strategy(strategy_identifier: str, *, model: Module, optimizer: Opti
 
 # CONTINUAL LEARNING AND EVALUATION
 # High-level
-def train_eval_model_continually(strategy_identifier: str, scenario: GenericCLScenario, strategy: BaseStrategy) -> list:
+def train_eval_model_continually(strategy_identifier: str, scenario: GenericCLScenario, strategy: SupervisedTemplate) -> list:
     # Training and evaluation following a specific continual learning strategy
     results = _train_eval_model_continually(strategy_identifier, scenario, strategy)
 
@@ -152,7 +152,7 @@ def train_eval_model_continually(strategy_identifier: str, scenario: GenericCLSc
 
 # Low-level
 def _train_eval_model_continually(strategy_identifier: str, scenario: GenericCLScenario,
-                                  strategy: BaseStrategy) -> list:
+                                  strategy: SupervisedTemplate) -> list:
     # Initialization
     # memory allocation
     results = []
