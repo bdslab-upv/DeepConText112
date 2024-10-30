@@ -10,9 +10,10 @@ from os.path import join
 
 from avalanche.benchmarks import dataset_benchmark
 from avalanche.benchmarks.scenarios import GenericCLScenario
-from avalanche.benchmarks.utils import AvalancheTensorDataset
+from avalanche.benchmarks.utils import AvalancheDataset
 from pandas import DataFrame, ExcelWriter
 from torch import stack, from_numpy
+from torch.utils.data import TensorDataset
 
 
 # SCENARIO GENERATION
@@ -69,9 +70,13 @@ def _generate_scenario_text_classifier(data: dict, time_window_identifiers: tupl
             # Tensor stacking
             text_attention_tensor = stack(tensors=(text_tensor, attention_tensor), dim=2)
 
+            # Tensor dataset creation
+            tensor_dataset = TensorDataset(text_attention_tensor, label_tensor)
+
             # Avalanche datasets
-            avalanche_dataset = AvalancheTensorDataset(
-                text_attention_tensor, label_tensor, task_labels=task_label, targets=label_tensor)
+            avalanche_dataset = AvalancheDataset(tensor_dataset)
+            avalanche_dataset = avalanche_dataset.with_task_labels(task_label)
+            avalanche_dataset = avalanche_dataset.with_targets(label_tensor)
 
             # Addition
             datasets[data_set].append(avalanche_dataset)

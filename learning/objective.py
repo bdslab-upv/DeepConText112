@@ -10,7 +10,7 @@ import warnings
 from abc import abstractmethod
 from math import isnan
 
-from avalanche.benchmarks.scenarios.generic_cl_scenario import GenericCLScenario
+from avalanche.benchmarks.scenarios import CLScenario
 
 import learning.contlearn as cl
 import learning.datahand as dh
@@ -58,7 +58,7 @@ class Objective(OptunaObjective):
 
     # INITIALIZATION
     def __init__(self, hyperparam_container: HyperparamContainer, model_identifier: str, strategy_identifier: str,
-                 scenario: GenericCLScenario) -> None:
+                 scenario: CLScenario) -> None:
         super().__init__(hyperparam_container)
 
         # Attributes assignation
